@@ -200,18 +200,16 @@ export default function AllPlayersList({
       </div>
 
       <div
-        className="grid grid-cols-[2rem_1fr_2.75rem_2.75rem_3.5rem_6rem] items-center gap-x-3 gap-y-0 px-2.5 pb-1 pr-[calc(0.625rem+8px)] text-[11px] font-medium uppercase tracking-wide"
+        className="flex items-center gap-x-3 px-2.5 pb-1 pr-[calc(0.625rem+8px)] text-[11px] font-medium uppercase tracking-wide"
         style={{ color: "var(--text-muted)", borderBottom: "1px solid var(--border)" }}
       >
-        <span>#</span>
-        <span>Player</span>
-        <span className="text-right">Team</span>
-        <span className="text-right">Pos</span>
-        <span className="text-right">Price</span>
-        <span className="text-right">Owned</span>
+        <span className="w-5 flex-none">#</span>
+        <span className="flex-1">Player</span>
+        <span className="w-14 flex-none text-right sm:w-16">Price</span>
+        <span className="w-20 flex-none text-right sm:w-24">Owned</span>
       </div>
       <div className="px-2.5 pt-1 text-[10px]" style={{ color: "var(--text-muted)" }}>
-        Next 5 fixtures shown per player · green = easier, red = harder (hover a fixture for details)
+        Next 5 fixtures per player · green = easier, red = harder (tap/hover a fixture for details)
       </div>
 
       <div className="scrollbar-thin max-h-[560px] overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
@@ -221,39 +219,35 @@ export default function AllPlayersList({
             <button
               key={p.id}
               onClick={() => onToggle(p)}
-              className="flex w-full flex-col gap-1 rounded-lg px-2.5 py-2 text-left transition-colors"
+              className="flex w-full flex-col gap-1.5 rounded-lg px-2.5 py-2.5 text-left transition-colors"
               style={{
                 background: active ? "color-mix(in srgb, var(--series-1) 10%, transparent)" : "transparent",
                 border: `1px solid ${active ? "var(--series-1)" : "transparent"}`
               }}
             >
-              <div className="grid grid-cols-[2rem_1fr_2.75rem_2.75rem_3.5rem_6rem] items-center gap-x-3">
-                <span className="text-xs tabular" style={{ color: "var(--text-muted)" }}>
+              <div className="flex items-center gap-x-3">
+                <span className="w-5 flex-none text-xs tabular" style={{ color: "var(--text-muted)" }}>
                   {i + 1}
                 </span>
-                <span className="min-w-0 truncate text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-                  {p.web_name}
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                    {p.web_name}
+                  </span>
+                  <span className="block truncate text-[11px]" style={{ color: "var(--text-muted)" }}>
+                    {p.team_short} · {p.position}
+                  </span>
                 </span>
-                <span className="text-right text-xs font-semibold" style={{ color: "var(--text-secondary)" }}>
-                  {p.team_short}
-                </span>
-                <span
-                  className="justify-self-end rounded px-1.5 py-0.5 text-[10px] font-bold"
-                  style={{ background: "var(--surface-2)", color: "var(--text-secondary)" }}
-                >
-                  {p.position}
-                </span>
-                <span className="text-right text-xs tabular" style={{ color: "var(--text-secondary)" }}>
+                <span className="w-14 flex-none text-right text-xs tabular sm:w-16" style={{ color: "var(--text-secondary)" }}>
                   {formatPrice(p.now_cost)}
                 </span>
-                <span className="flex items-center justify-end gap-2">
+                <span className="flex w-20 flex-none flex-col items-end gap-0.5 sm:w-24">
                   <span className="text-sm font-semibold tabular" style={{ color: "var(--text-primary)" }}>
                     {formatPct(p.selected_by_percent)}
                   </span>
                   <DeltaBadge value={p.delta} />
                 </span>
               </div>
-              <div className="pl-[2rem]">
+              <div className="scrollbar-thin -mx-1 overflow-x-auto px-1 pl-[2rem]">
                 <FixtureStrip fixtures={fixturesByTeam[p.team]} />
               </div>
             </button>

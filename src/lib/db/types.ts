@@ -17,6 +17,8 @@ export interface DbAdapter {
   getLatestSnapshots(): Promise<SnapshotRow[]>;
   /** Most recent snapshot batch at or before thresholdTs (its ts + rows). */
   getSnapshotAsOf(thresholdTs: number): Promise<{ ts: number | null; rows: SnapshotRow[] }>;
+  /** The snapshot batch immediately before the latest one (tick-over-tick, for "live"). */
+  getPreviousSnapshot(): Promise<{ ts: number | null; rows: SnapshotRow[] }>;
   getHistory(playerIds: number[], sinceTs: number): Promise<SnapshotRow[]>;
   getSnapshotRange(): Promise<SnapshotTsRange>;
   getDistinctTs(sinceTs: number): Promise<number[]>;

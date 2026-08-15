@@ -30,8 +30,8 @@ function Panel({
       className="rounded-xl p-4"
       style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
     >
-      <div className="mb-3 flex items-start justify-between gap-2">
-        <div>
+      <div className="mb-3 flex flex-wrap items-start justify-between gap-x-2 gap-y-2.5">
+        <div className="min-w-0">
           <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
             {title}
           </h2>
@@ -105,7 +105,7 @@ export default function Dashboard() {
               style={{ background: "var(--good)" }}
               aria-hidden
             />
-            <h1 className="text-xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>
+            <h1 className="text-lg font-bold tracking-tight sm:text-xl" style={{ color: "var(--text-primary)" }}>
               FPL Ownership Live
             </h1>
           </div>
@@ -150,7 +150,7 @@ export default function Dashboard() {
         </Panel>
       ) : (
         <div className="flex flex-col gap-5">
-          <div className="flex flex-wrap gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
             <StatTile label="Players tracked" value={String(players.length || "—")} />
             <StatTile
               label="Snapshots"

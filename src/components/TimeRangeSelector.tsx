@@ -21,7 +21,7 @@ export default function TimeRangeSelector({
 }) {
   return (
     <div
-      className="inline-flex items-center gap-0.5 rounded-lg p-0.5"
+      className="flex max-w-full flex-wrap items-center gap-0.5 rounded-lg p-0.5"
       style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
       role="tablist"
       aria-label="Time range"
@@ -34,7 +34,7 @@ export default function TimeRangeSelector({
             role="tab"
             aria-selected={active}
             onClick={() => onChange(r.value)}
-            className="rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors"
+            className="rounded-md px-2 py-1.5 text-xs font-medium transition-colors sm:px-2.5"
             style={{
               background: active ? "var(--series-1)" : "transparent",
               color: active ? "#ffffff" : "var(--text-secondary)"

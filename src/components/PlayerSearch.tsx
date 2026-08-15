@@ -60,16 +60,16 @@ export default function PlayerSearch({
                   onAdd(p);
                   setQuery("");
                 }}
-                className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm disabled:opacity-40"
+                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm disabled:opacity-40"
                 style={{ borderTop: "1px solid var(--border)" }}
               >
-                <span>
+                <span className="min-w-0 truncate">
                   <span style={{ color: "var(--text-primary)" }}>{p.web_name}</span>{" "}
                   <span style={{ color: "var(--text-muted)" }}>
                     {p.team_short} · {p.position}
                   </span>
                 </span>
-                <span className="tabular" style={{ color: "var(--text-secondary)" }}>
+                <span className="tabular flex-none whitespace-nowrap text-xs" style={{ color: "var(--text-secondary)" }}>
                   {formatPct(p.selected_by_percent)} · {formatPrice(p.now_cost)}
                 </span>
               </button>

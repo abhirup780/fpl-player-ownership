@@ -131,6 +131,17 @@ async function getSnapshotAsOf(
   return { ts, rows };
 }
 
+async function getPreviousSnapshot(): Promise<{ ts: number | null; rows: SnapshotRow[] }> {
+  const s = getSql();
+  const tsRows = await s<{ ts: number }[]>`
+    SELECT DISTINCT ts FROM snapshots ORDER BY ts DESC LIMIT 1 OFFSET 1
+  `;
+  const ts = tsRows[0]?.ts ?? null;
+  if (!ts) return { ts: null, rows: [] };
+  const rows = await s<SnapshotRow[]>`SELECT * FROM snapshots WHERE ts = ${ts}`;
+  return { ts, rows };
+}
+
 async function getHistory(playerIds: number[], sinceTs: number): Promise<SnapshotRow[]> {
   if (playerIds.length === 0) return [];
   const s = getSql();
@@ -168,6 +179,7 @@ export const postgresAdapter: DbAdapter = {
   getPlayers,
   getLatestSnapshots,
   getSnapshotAsOf,
+  getPreviousSnapshot,
   getHistory,
   getSnapshotRange,
   getDistinctTs

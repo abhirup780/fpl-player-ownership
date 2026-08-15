@@ -3,7 +3,10 @@
 import { formatDelta } from "@/lib/format";
 
 export default function DeltaBadge({ value, size = "sm" }: { value: number | null; size?: "sm" | "md" }) {
-  const flat = value === null || Math.abs(value) < 0.02;
+  // FPL's own API only reports selected_by_percent to 1 decimal place, so any
+  // real change is at least 0.1pp — this only needs to catch float noise near
+  // true zero, not swallow genuine small moves.
+  const flat = value === null || Math.abs(value) < 0.005;
   const rising = !flat && (value as number) > 0;
   const color = flat ? "var(--text-muted)" : rising ? "var(--good-text)" : "var(--critical)";
   const bg = flat ? "transparent" : rising ? "color-mix(in srgb, var(--good) 14%, transparent)" : "color-mix(in srgb, var(--critical) 14%, transparent)";

@@ -31,27 +31,34 @@ export default function MostOwnedPanel({
               border: `1px solid ${active ? "var(--series-1)" : "transparent"}`
             }}
           >
-            <span className="w-4 text-xs font-medium tabular" style={{ color: "var(--text-muted)" }}>
+            <span className="w-4 flex-none text-xs font-medium tabular" style={{ color: "var(--text-muted)" }}>
               {i + 1}
             </span>
-            <span className="flex w-32 flex-none flex-col overflow-hidden sm:w-40">
+            <span className="flex w-20 flex-none flex-col overflow-hidden sm:w-32 md:w-40">
               <span className="truncate text-sm font-medium" style={{ color: "var(--text-primary)" }}>
                 {p.web_name}
               </span>
               <span className="truncate text-[11px]" style={{ color: "var(--text-muted)" }}>
-                {p.team_short} · {p.position} · {formatPrice(p.now_cost)}
+                {p.team_short} · {p.position}
+                <span className="hidden sm:inline"> · {formatPrice(p.now_cost)}</span>
               </span>
             </span>
-            <span className="relative h-5 flex-1 overflow-hidden rounded" style={{ background: "var(--surface-2)" }}>
+            <span
+              className="relative hidden h-5 flex-1 overflow-hidden rounded sm:block"
+              style={{ background: "var(--surface-2)" }}
+            >
               <span
                 className="absolute inset-y-0 left-0 rounded transition-all"
                 style={{ width: `${width}%`, background: "var(--seq-400)" }}
               />
             </span>
-            <span className="w-14 flex-none text-right text-sm font-semibold tabular" style={{ color: "var(--text-primary)" }}>
+            <span
+              className="ml-auto w-12 flex-none text-right text-sm font-semibold tabular sm:ml-0 sm:w-14"
+              style={{ color: "var(--text-primary)" }}
+            >
               {formatPct(p.selected_by_percent)}
             </span>
-            <span className="w-20 flex-none text-right">
+            <span className="w-14 flex-none text-right sm:w-20">
               <DeltaBadge value={p.delta} />
             </span>
           </button>

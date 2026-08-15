@@ -156,7 +156,7 @@ export default function MyTeamPanel({ fixturesByTeam }: { fixturesByTeam: Record
                         {p?.position} {p ? `· ${formatPrice(p.now_cost)}` : ""}
                       </span>
                       {p && (
-                        <span className="mt-1">
+                        <span className="scrollbar-thin -mx-1 mt-1 block overflow-x-auto px-1">
                           <FixtureStrip fixtures={fixturesByTeam[p.team]} />
                         </span>
                       )}

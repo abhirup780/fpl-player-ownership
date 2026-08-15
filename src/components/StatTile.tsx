@@ -13,7 +13,7 @@ export default function StatTile({
 }) {
   return (
     <div
-      className="flex-1 min-w-[140px] rounded-xl p-4"
+      className="min-w-0 flex-1 rounded-xl p-3 sm:min-w-[140px] sm:p-4"
       style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
     >
       <div className="text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>

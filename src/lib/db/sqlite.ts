@@ -127,6 +127,16 @@ function getSnapshotAsOf(thresholdTs: number): Promise<{ ts: number | null; rows
   return Promise.resolve({ ts: tsRow.ts, rows });
 }
 
+function getPreviousSnapshot(): Promise<{ ts: number | null; rows: SnapshotRow[] }> {
+  const d = getDb();
+  const tsRow = d
+    .prepare(`SELECT ts FROM (SELECT DISTINCT ts FROM snapshots ORDER BY ts DESC LIMIT 1 OFFSET 1)`)
+    .get() as { ts: number } | undefined;
+  if (!tsRow) return Promise.resolve({ ts: null, rows: [] });
+  const rows = d.prepare(`SELECT * FROM snapshots WHERE ts = ?`).all(tsRow.ts) as SnapshotRow[];
+  return Promise.resolve({ ts: tsRow.ts, rows });
+}
+
 function getHistory(playerIds: number[], sinceTs: number): Promise<SnapshotRow[]> {
   if (playerIds.length === 0) return Promise.resolve([]);
   const d = getDb();
@@ -165,6 +175,7 @@ export const sqliteAdapter: DbAdapter = {
   getPlayers,
   getLatestSnapshots,
   getSnapshotAsOf,
+  getPreviousSnapshot,
   getHistory,
   getSnapshotRange,
   getDistinctTs

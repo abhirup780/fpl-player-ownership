@@ -59,7 +59,7 @@ export default function MomentumChart({ players }: { players: PlayerLatest[] }) 
 
   return (
     <div className="fade-in">
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <p className="text-xs" style={{ color: "var(--text-muted)" }}>
           Ownership % vs. momentum this range · bubble size = price
         </p>
@@ -72,9 +72,9 @@ export default function MomentumChart({ players }: { players: PlayerLatest[] }) 
             step={0.5}
             value={minOwn}
             onChange={(e) => setMinOwn(Number(e.target.value))}
-            className="accent-[var(--series-1)]"
+            className="w-20 accent-[var(--series-1)] sm:w-28"
           />
-          <span className="tabular w-9">{minOwn.toFixed(1)}%</span>
+          <span className="tabular w-9 flex-none">{minOwn.toFixed(1)}%</span>
         </label>
       </div>
       <ResponsiveContainer width="100%" height={320}>
