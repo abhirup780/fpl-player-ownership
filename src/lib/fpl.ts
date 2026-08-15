@@ -105,6 +105,21 @@ export async function getEntryPicks(teamId: number, event: number): Promise<FplP
   return fplFetch<FplPicksResponse>(`/entry/${teamId}/event/${event}/picks/`);
 }
 
+export interface FplFixture {
+  id: number;
+  event: number | null;
+  kickoff_time: string | null;
+  finished: boolean;
+  team_h: number;
+  team_a: number;
+  team_h_difficulty: number;
+  team_a_difficulty: number;
+}
+
+export async function getFixtures(): Promise<FplFixture[]> {
+  return fplFetch<FplFixture[]>("/fixtures/?future=1");
+}
+
 export const POSITION_MAP: Record<number, string> = {
   1: "GKP",
   2: "DEF",

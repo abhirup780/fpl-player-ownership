@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { PlayerLatest, TimeRange } from "@/lib/types";
-import { useHistory, useLiveSnapshotPing, useMeta, useMovers, usePlayers } from "@/lib/useApi";
+import { useFixtures, useHistory, useLiveSnapshotPing, useMeta, useMovers, usePlayers } from "@/lib/useApi";
 import { formatTimeAgo } from "@/lib/format";
 import TimeRangeSelector from "./TimeRangeSelector";
 import StatTile from "./StatTile";
@@ -60,6 +60,7 @@ export default function Dashboard() {
   const { players, loading } = usePlayers(range);
   const rising = useMovers(range, "rising", risingMode === "breakout");
   const falling = useMovers(range, "falling");
+  const fixturesByTeam = useFixtures();
 
   useEffect(() => {
     if (theme === "system") document.documentElement.removeAttribute("data-theme");
@@ -145,7 +146,7 @@ export default function Dashboard() {
 
       {tab === "myteam" ? (
         <Panel title="My Team" subtitle="Enter your public FPL Team ID to see your squad's live ownership.">
-          <MyTeamPanel />
+          <MyTeamPanel fixturesByTeam={fixturesByTeam} />
         </Panel>
       ) : (
         <div className="flex flex-col gap-5">
@@ -234,9 +235,15 @@ export default function Dashboard() {
 
           <Panel
             title="All players"
-            subtitle="Ranked by ownership %, scroll for more. Click a row to add it to the comparison chart."
+            subtitle="Ranked by ownership %, scroll for more. Filter by team, price or position. Click a row to add it to the comparison chart."
           >
-            <AllPlayersList players={players} onToggle={toggleSelect} selectedIds={selectedIdSet} />
+            <AllPlayersList
+              players={players}
+              onToggle={toggleSelect}
+              selectedIds={selectedIdSet}
+              teams={meta?.teams ?? []}
+              fixturesByTeam={fixturesByTeam}
+            />
           </Panel>
 
           {loading && players.length === 0 && (

@@ -121,6 +121,34 @@ export function useHistory(ids: number[], range: TimeRange, refreshMs = 90000) {
   return { series, loading };
 }
 
+export interface FixtureEntry {
+  event: number | null;
+  opponent_short: string;
+  opponent_name: string;
+  is_home: boolean;
+  difficulty: number;
+  kickoff_time: string | null;
+}
+
+export function useFixtures(refreshMs = 10 * 60 * 1000) {
+  const [byTeam, setByTeam] = useState<Record<number, FixtureEntry[]>>({});
+  useEffect(() => {
+    let cancelled = false;
+    const load = () => {
+      fetchJson<{ byTeam: Record<number, FixtureEntry[]> }>("/api/fixtures")
+        .then((res) => !cancelled && setByTeam(res.byTeam))
+        .catch(() => {});
+    };
+    load();
+    const id = setInterval(load, refreshMs);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
+  }, [refreshMs]);
+  return byTeam;
+}
+
 export interface MoversResponse {
   range: TimeRange;
   direction: "rising" | "falling";

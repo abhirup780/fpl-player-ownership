@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { formatPct, formatPrice } from "@/lib/format";
 import DeltaBadge from "./DeltaBadge";
+import FixtureStrip from "./FixtureStrip";
+import type { FixtureEntry } from "@/lib/useApi";
 import type { PlayerLatest } from "@/lib/types";
 
 interface SquadPick {
@@ -23,7 +25,7 @@ interface TeamResponse {
 
 const STORAGE_KEY = "fpl-tracker-team-id";
 
-export default function MyTeamPanel() {
+export default function MyTeamPanel({ fixturesByTeam }: { fixturesByTeam: Record<number, FixtureEntry[]> }) {
   const [teamId, setTeamId] = useState("");
   const [input, setInput] = useState("");
   const [data, setData] = useState<TeamResponse | null>(null);
@@ -153,6 +155,11 @@ export default function MyTeamPanel() {
                       <span className="text-[11px]" style={{ color: "var(--text-muted)" }}>
                         {p?.position} {p ? `· ${formatPrice(p.now_cost)}` : ""}
                       </span>
+                      {p && (
+                        <span className="mt-1">
+                          <FixtureStrip fixtures={fixturesByTeam[p.team]} />
+                        </span>
+                      )}
                     </span>
                     {p && (
                       <span className="flex flex-none flex-col items-end gap-0.5">
