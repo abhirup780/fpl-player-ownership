@@ -32,9 +32,22 @@ export default function AllPlayersList({
 }) {
   const [position, setPosition] = useState<string | null>(null);
   const [team, setTeam] = useState<string>("");
+  // The committed range drives filtering (expensive: re-filters/re-sorts the
+  // whole list, which changes the visible row count and reflows the page).
+  // `draftPrice` is what the sliders actually show while dragging, so the
+  // list — and the layout around the slider — stays put mid-drag; the
+  // commit is debounced so filtering only happens once the drag settles.
   const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, PRICE_MAX]);
+  const [draftPrice, setDraftPrice] = useState<[number, number]>([PRICE_MIN, PRICE_MAX]);
+  const commitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  const updateDraftPrice = (next: [number, number]) => {
+    setDraftPrice(next);
+    if (commitTimer.current) clearTimeout(commitTimer.current);
+    commitTimer.current = setTimeout(() => setPriceRange(next), 200);
+  };
 
   const sorted = useMemo(() => {
     const [lo, hi] = priceRange;
@@ -68,13 +81,21 @@ export default function AllPlayersList({
 
   const shown = sorted.slice(0, visible);
 
+  useEffect(() => {
+    return () => {
+      if (commitTimer.current) clearTimeout(commitTimer.current);
+    };
+  }, []);
+
   const resetFilters = () => {
     setPosition(null);
     setTeam("");
+    if (commitTimer.current) clearTimeout(commitTimer.current);
+    setDraftPrice([PRICE_MIN, PRICE_MAX]);
     setPriceRange([PRICE_MIN, PRICE_MAX]);
   };
 
-  const filtersActive = position !== null || team !== "" || priceRange[0] !== PRICE_MIN || priceRange[1] !== PRICE_MAX;
+  const filtersActive = position !== null || team !== "" || draftPrice[0] !== PRICE_MIN || draftPrice[1] !== PRICE_MAX;
 
   return (
     <div>
@@ -135,8 +156,11 @@ export default function AllPlayersList({
         </div>
 
         <div>
-          <div className="mb-1 text-[10px] font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>
-            Price: {formatPrice(priceRange[0])} – {formatPrice(priceRange[1])}
+          <div
+            className="mb-1 whitespace-nowrap text-[10px] font-medium uppercase tracking-wide tabular"
+            style={{ color: "var(--text-muted)" }}
+          >
+            Price: {formatPrice(draftPrice[0])} – {formatPrice(draftPrice[1])}
           </div>
           <div className="flex items-center gap-2">
             <input
@@ -144,8 +168,8 @@ export default function AllPlayersList({
               min={PRICE_MIN}
               max={PRICE_MAX}
               step={1}
-              value={priceRange[0]}
-              onChange={(e) => setPriceRange([Math.min(Number(e.target.value), priceRange[1]), priceRange[1]])}
+              value={draftPrice[0]}
+              onChange={(e) => updateDraftPrice([Math.min(Number(e.target.value), draftPrice[1]), draftPrice[1]])}
               className="w-24 accent-[var(--series-1)]"
             />
             <input
@@ -153,8 +177,8 @@ export default function AllPlayersList({
               min={PRICE_MIN}
               max={PRICE_MAX}
               step={1}
-              value={priceRange[1]}
-              onChange={(e) => setPriceRange([priceRange[0], Math.max(Number(e.target.value), priceRange[0])])}
+              value={draftPrice[1]}
+              onChange={(e) => updateDraftPrice([draftPrice[0], Math.max(Number(e.target.value), draftPrice[0])])}
               className="w-24 accent-[var(--series-1)]"
             />
           </div>
