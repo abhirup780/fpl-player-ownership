@@ -8,7 +8,22 @@ function getSql(): postgres.Sql {
   if (sql) return sql;
   const url = process.env.POSTGRES_URL || process.env.DATABASE_URL;
   if (!url) throw new Error("POSTGRES_URL is not set");
-  sql = postgres(url, { ssl: "require", max: 5 });
+  sql = postgres(url, {
+    ssl: "require",
+    max: 5,
+    // Our `ts` columns are BIGINT (epoch ms) but always well within
+    // Number.MAX_SAFE_INTEGER — return them as plain numbers instead of the
+    // driver's default (strings, to avoid silent precision loss on huge
+    // bigints), so callers can do normal arithmetic/JSON without casting.
+    types: {
+      bigint: {
+        to: 20,
+        from: [20],
+        serialize: (x: number) => String(x),
+        parse: (x: string) => Number(x)
+      }
+    }
+  });
   return sql;
 }
 

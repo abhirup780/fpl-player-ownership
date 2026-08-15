@@ -1,0 +1,24 @@
+name: FPL ownership snapshot ping
+
+on:
+  schedule:
+    # GitHub Actions cron is best-effort and can slip a few minutes under load,
+    # but this is what keeps history flowing when nobody has the dashboard open.
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger a snapshot
+        run: |
+          status=$(curl -s -o /tmp/body.txt -w "%{http_code}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.APP_URL }}/api/cron")
+          echo "HTTP $status"
+          cat /tmp/body.txt
+          if [ "$status" -ge 300 ]; then
+            echo "Snapshot ping failed"
+            exit 1
+          fi

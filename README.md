@@ -13,12 +13,14 @@ There's no admin panel — the app collects data itself:
   few minutes. That route fetches `bootstrap-static` from the FPL API and stores
   one ownership snapshot per player, throttled to at most once every 5 minutes
   regardless of how many tabs are open.
-- `GET /api/cron` does the same thing and is wired up in `vercel.json` as a
-  scheduled function, as a backstop for when nobody has the site open.
-  **Vercel's Hobby plan only fires cron jobs once a day** — on Hobby, the
-  client-side pings above are what actually keep the "live" data flowing, so
-  keep a tab open (or upgrade to Pro for real per-hour cron) if you want dense
-  history. On Pro, tighten the schedule in `vercel.json`.
+- `GET /api/cron` does the same thing. `vercel.json` wires it up as a
+  once-daily backstop (Vercel Hobby rejects any cron schedule that fires more
+  than once a day, so that's the ceiling there — on Pro you can tighten it).
+- The real 5-minute cadence comes from `.github/workflows/snapshot-cron.yml`,
+  a GitHub Actions workflow that pings `GET /api/cron` every 5 minutes
+  regardless of hosting plan or whether anyone has a tab open. It needs two
+  repo secrets: `APP_URL` (your deployed URL, no trailing slash) and
+  `CRON_SECRET` (must match the value set in Vercel's project env vars).
 - The first request ever made to `/api/players` seeds the database automatically
   if it's empty, so the dashboard is never blank on a fresh deploy.
 

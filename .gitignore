@@ -9,3 +9,6 @@ data
 .vercel
 npm-debug.log*
 *.tsbuildinfo
+
+.vercel
+.env*
