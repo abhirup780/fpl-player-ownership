@@ -2,10 +2,14 @@ export function formatPct(v: number, digits = 1): string {
   return `${v.toFixed(digits)}%`;
 }
 
-export function formatDelta(v: number | null, digits = 2): string {
+export function formatDelta(v: number | null): string {
   if (v === null || !Number.isFinite(v)) return "—";
-  const sign = v > 0 ? "+" : "";
-  return `${sign}${v.toFixed(digits)}pp`;
+  // FPL only reports ownership to 1 decimal place, so round there — and drop
+  // a trailing ".0" (e.g. "+1pp" not "+1.0pp") since it adds no information.
+  const rounded = Math.round(v * 10) / 10;
+  const sign = rounded > 0 ? "+" : "";
+  const text = rounded === 0 ? "0" : Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+  return `${sign}${text}pp`;
 }
 
 export function formatPrice(tenths: number): string {
